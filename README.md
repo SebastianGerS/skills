@@ -4,6 +4,12 @@ A collection of agent skills that extend capabilities across planning, developme
 
 ## Planning & Design
 
+- **grill-me** — Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree.
+
+  ```
+  npx skills@latest add perhells/skills/grill-me
+  ```
+
 - **write-a-prd** — Create a PRD through user interview, codebase exploration, and module design, then submit as a new or updated Linear issue.
 
   ```
@@ -14,12 +20,6 @@ A collection of agent skills that extend capabilities across planning, developme
 
   ```
   npx skills@latest add perhells/skills/prd-to-local-implementation-plan
-  ```
-
-- **grill-me** — Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree.
-
-  ```
-  npx skills@latest add perhells/skills/grill-me
   ```
 
 ## Knowledge

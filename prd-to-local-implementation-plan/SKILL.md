@@ -4,4 +4,4 @@ description: Mirror information from Linear for local tasks in order to enable s
 ---
 
 1. Download the PRD for a given Linear issue to the plans folder for sandboxed local development.
-2. Add a new task to progress.yaml for implementation of this issue.
+2. Add a new task to progress.yaml in the project root for implementation of this issue.

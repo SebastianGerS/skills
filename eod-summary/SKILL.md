@@ -294,7 +294,9 @@ Draft 1–3 "Top of mind" bullets from these signals. If nothing meaningful is f
 
 Synthesize all gathered data into a **draft** "Idag" section. Write in Swedish, using natural narrative bullet points (not technical commit-style).
 
-**REQUIRED:** Apply the human-voice skill's contract to every bullet across all three sections. In particular: complete plain sentences over telegraphic fragments, no em-dashes, and spell out compression shorthands (`+` → "och", `X→Y` → "från X till Y", `/` between values). Shorter does not mean clipped.
+**REQUIRED — always invoke the human-voice skill as the last step before showing the draft.** Do not just apply the contract from memory: actually invoke the `human-voice` skill (via the Skill tool) on the compiled draft every single time, even when the draft already looks fine. The skill re-samples the user's real voice and tightens the bullets. Only after that pass do you present the draft to the user.
+
+The contract that pass enforces, for every bullet across all three sections: complete plain sentences over telegraphic fragments, no em-dashes, and spell out compression shorthands (`+` → "och", `X→Y` → "från X till Y", `/` between values). Shorter does not mean clipped.
 
 **Hard limit: 3–4 bullets.** Aggressively merge related work into single bullets. The goal is a concise high-level summary, not an exhaustive changelog. Merging rules:
 - All work on the same initiative/theme = one bullet (e.g. "Security v13" across 15 repos is ONE bullet, not per-repo)

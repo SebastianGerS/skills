@@ -294,6 +294,8 @@ Draft 1–3 "Top of mind" bullets from these signals. If nothing meaningful is f
 
 Synthesize all gathered data into a **draft** "Idag" section. Write in Swedish, using natural narrative bullet points (not technical commit-style).
 
+**REQUIRED:** Apply the human-voice skill's contract to every bullet across all three sections. In particular: complete plain sentences over telegraphic fragments, no em-dashes, and spell out compression shorthands (`+` → "och", `X→Y` → "från X till Y", `/` between values). Shorter does not mean clipped.
+
 **Hard limit: 3–4 bullets.** Aggressively merge related work into single bullets. The goal is a concise high-level summary, not an exhaustive changelog. Merging rules:
 - All work on the same initiative/theme = one bullet (e.g. "Security v13" across 15 repos is ONE bullet, not per-repo)
 - CI/infrastructure changes related to the same effort fold into that effort's bullet
@@ -339,17 +341,30 @@ After presenting the draft, ask the user:
 
 Then produce the final version incorporating their input.
 
-### Step 10: Copy to Clipboard
+### Step 10: Post to #nexus-eods
 
-After the user confirms the final version, copy it to the clipboard using:
+After the user confirms the final version, post it as a reply in the day's EOD thread in **#nexus-eods** (private channel, ID `C09AMEF6AG7`). The team posts EODs as replies under the daily Slackbot "Dagens EOD" reminder, so that reminder message is the thread parent — do NOT post a new top-level message and do NOT just copy to clipboard.
 
-```bash
-pbcopy << 'EOF'
-{final Slack-formatted message}
-EOF
-```
-
-Confirm with: "Copied to clipboard — ready to paste into Slack."
+1. **Determine the target date** — today by default, or the specific earlier day if the skill was explicitly run for a previous day (e.g. "eod for friday").
+2. **Find that day's reminder thread.** Read the channel newest-first and locate the Slackbot `Dagens EOD` reminder whose timestamp **date matches the target date**:
+   ```
+   slack_read_channel(channel_id="C09AMEF6AG7", limit=15, response_format="detailed")
+   ```
+   Grab that reminder's `Message TS` — it is the thread parent. (If the channel ID ever changes, re-find it with `slack_search_channels(query="eod", channel_types="public_channel,private_channel")`.)
+3. **Post as a thread reply:**
+   ```
+   slack_send_message(channel_id="C09AMEF6AG7", thread_ts="<reminder ts>", message="<final EOD>")
+   ```
+   `slack_send_message` accepts **standard markdown** and converts it to Slack formatting — so for the posted message use `**bold**` section headings and `[text](url)` links (NOT the `*bold*` / `<url|text>` mrkdwn from Step 9's preview). Keep `•` bullets. Do not set `reply_broadcast`.
+4. **Return the `message_link`** to the user, and ask them to eyeball that the bold headings rendered. If literal `**` shows up, the tool passed the markdown through unchanged — repost with single-asterisk `*bold*`.
+5. **No matching reminder for the target date** (e.g. weekend, or the reminder hasn't fired yet): do NOT guess a thread. Tell the user there's no EOD thread for that day and offer to either (a) post as a standalone top-level message in the channel, or (b) fall back to clipboard.
+6. **Slack not available / not authenticated:** fall back to clipboard and say so —
+   ```bash
+   pbcopy << 'EOF'
+   {final Slack-formatted message}
+   EOF
+   ```
+   Confirm with: "Slack posting wasn't available — copied to clipboard instead, ready to paste."
 
 ## Notes
 

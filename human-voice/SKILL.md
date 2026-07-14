@@ -26,13 +26,13 @@ If sampling isn't possible, fall back to the contract below.
 - Prose by default. Use a list only when there are 3+ genuinely parallel items AND their samples use lists. Bold at most one key term, and only if they do.
 - One idea per short paragraph.
 
-**3. Per surface:**
-- *Slack* — no greeting or sign-off, lead with the point.
-- *Email* — greeting/sign-off only if their samples have them; the subject line states the point.
+**3. Per surface** (budgets are the default; if their samples run longer, match the samples):
+- *Slack* — no greeting or sign-off, lead with the point. Budget: 4 sentences.
+- *Email* — greeting/sign-off only if their samples have them; the subject line states the point. Budget: 6 sentences of body.
 - *Linear* — title `type(scope): short description NEX-ID`; body is 1–3 plain paragraphs (what's broken, why it matters, what to do). Headed sections only for a genuinely large ticket.
 - *Notion* — headings are fine; keep the body prose, not bullet scaffolding.
 
-**4. Read it back.** Would a busy colleague assume a human wrote this in a minute? If it has a tidy assistant shape they wouldn't use (intro → three bullets → wrap-up, a closing "let me know if…", a recap of what you just said), flatten it and cut more.
+**4. Read it back, then cut once.** Would a busy colleague assume a human wrote this in a minute? If it has a tidy assistant shape they wouldn't use (intro → three bullets → wrap-up, a closing "let me know if…", a recap of what you just said), flatten it. Then do one deliberate cut pass: delete every sentence the reader doesn't need in order to act or get the point — background, restated context, and hedges go first. If the draft is over the surface budget, cut whole ideas until it fits, not words.
 
 ## Examples
 

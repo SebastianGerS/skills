@@ -25,6 +25,11 @@ ralphish --rm .                                         # remove sandbox
 
 Runs are long (minutes per iteration) — from Claude Code, launch with `run_in_background` and check output periodically.
 
+Headless caveats (running from Claude Code / CI rather than a terminal):
+
+- Requires the `[ -t 0 ]` TTY guard in `~/Dev/Infra/docker-sandbox/sandbox` (prompt mode); without it every phase dies with `the input device is not a TTY`. Fixed locally 2026-07-14; check it's still there after pulling that repo — upstream may not have it.
+- With `--include-local-config`, a `model` pinned in `~/.claude/settings.json` (e.g. `fable`) is synced into the sandbox, and the worker fails with "issue with the selected model" when the sandbox token can't use that alias. Pass `--worker-model claude-opus-5` as the fallback — reviewer/orchestrator already get explicit models.
+
 Other flags: `--codex`/`--agent codex` (Codex instead of Claude), `--include-local-config` (copy local plugins/skills into sandbox), `--env KEY=VALUE`, `--reviewer-model` / `--orchestrator-model` (default sonnet-tier), `--worker-model` (fallback only — normally the orchestrator sets `worker_tier: simple|medium|complex|frontier` in `context.yaml` and ralphish resolves the model from that).
 
 ## Managing tasks (progress.yaml)
@@ -54,6 +59,7 @@ Task authoring pipeline for bigger work: `/grill-me` → `/write-a-prd` → `/pr
 - `~/Dev/Projects/.ralphish/context.yaml` — orchestrator's current state: assigned task, feedback, `worker_tier` (transient; wiped each invocation)
 - `.ralphish/summary.yaml` / `.ralphish/review.yaml` — what the worker did / reviewer verdict this iteration
 - `progress.yaml` `orchestration.history` — durable append-only log of iteration outcomes
+- `.ralphish-metrics.jsonl` — harness-written, one JSON line per iteration: per-phase wall-clock and token counts (agents no longer self-report tokens)
 - Exit code 0 with tasks remaining usually means the orchestrator signalled PAUSE (external action needed — e.g. merge a PR); do the action, then re-run the same command to resume
 
 ## Common mistakes

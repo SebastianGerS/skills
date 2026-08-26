@@ -82,7 +82,7 @@ Filter output for issues updated "today", "just now", "X seconds ago", "X minute
 linear issue view <ID> --no-pager --json 2>&1
 ```
 
-This returns JSON with `state`, `description`, `comments`, `attachments`, `children`, and `project`. Use this to write richer "Idag" bullets — e.g. mention PR links from attachments, note state transitions (moved to "In Review"), or summarize what was done based on description + comments.
+This returns JSON with `state`, `description`, `comments`, `attachments`, `children`, and `project`. Use this to write richer "Today" bullets — e.g. mention PR links from attachments, note state transitions (moved to "In Review"), or summarize what was done based on description + comments.
 
 ### Step 4: Claude Code Sessions
 
@@ -228,11 +228,11 @@ For any threads found in the results, use `mcp__plugin_slack_slack__slack_read_t
 - Flag any open questions or action items directed at the user
 - Note any threads where the user is waiting for a response or where someone is waiting for theirs
 - Skip bot messages, join/leave notifications, and automated messages
-- Use the Slack activity to enrich "Idag" bullets (e.g. "Diskuterade X med Y i #channel") and to surface blockers/open questions for "Top of mind"
+- Use the Slack activity to enrich "Today" bullets (e.g. "Discussed X with Y in #channel") and to surface blockers/open questions for "Top of mind"
 
 If the Slack MCP tools are not authenticated or fail, skip gracefully and note the gap.
 
-### Step 7: Infer "Imorgon/Måndag"
+### Step 7: Infer "Tomorrow/Monday"
 
 Before compiling, scan the gathered data for signals of unfinished work that is likely to continue the next day. Use these heuristics:
 
@@ -259,7 +259,7 @@ Before compiling, scan the gathered data for signals of unfinished work that is 
 - Discussions the user started that are still ongoing → may need to check back
 - Action items assigned to the user in Slack threads
 
-Based on these signals, draft 1–3 bullets for "Imorgon" (or "Måndag" on Friday) as a suggested starting point. Mark it clearly as a suggestion — the user will confirm or adjust. Phrase as intentions, e.g. "Fortsätta med X", "Merga och deploya Y till prod", "Följa upp Z".
+Based on these signals, draft 1–3 bullets for "Tomorrow" (or "Monday" on Friday) as a suggested starting point. Mark it clearly as a suggestion — the user will confirm or adjust. Phrase as intentions, e.g. "Continue with X", "Merge and deploy Y to prod", "Follow up on Z".
 
 ### Step 8: Infer "Top of mind"
 
@@ -288,29 +288,27 @@ Scan all gathered data for things that don't fit cleanly into "what I did" or "w
 **Anything explicit:**
 - Messages in sessions or Slack where the user wrote something like "need to check", "ask about", "remember to", "don't forget"
 
-Draft 1–3 "Top of mind" bullets from these signals. If nothing meaningful is found, leave it as `(fyll i)` — don't invent things. Phrase naturally, e.g. "Väntar på review av PR X", "Vet inte varför Y börjat fela — bör undersökas", "Hålla koll på deploy av Z".
+Draft 1–3 "Top of mind" bullets from these signals. If nothing meaningful is found, leave it as `(fill in)` — don't invent things. Phrase naturally, e.g. "Waiting on review of PR X", "Not sure why Y started failing, needs investigating", "Keeping an eye on the Z deploy".
 
-### Step 9: Compile and Present
+### Step 9: Compile Draft
 
-Synthesize all gathered data into a **draft** "Idag" section. Write in Swedish, using natural narrative bullet points (not technical commit-style).
-
-**REQUIRED — always invoke the human-voice skill as the last step before showing the draft.** Do not just apply the contract from memory: actually invoke the `human-voice` skill (via the Skill tool) on the compiled draft every single time, even when the draft already looks fine. The skill re-samples the user's real voice and tightens the bullets. Only after that pass do you present the draft to the user.
-
-The contract that pass enforces, for every bullet across all three sections: complete plain sentences over telegraphic fragments, no em-dashes, and spell out compression shorthands (`+` → "och", `X→Y` → "från X till Y", `/` between values). Shorter does not mean clipped.
+Synthesize all gathered data into a **draft** "Today" section. Write in **English**, using natural narrative bullet points (not technical commit-style). The whole post is in English — headings, bullets and all — because the team includes colleagues who don't read Swedish.
 
 **Hard limit: 3–4 bullets.** Aggressively merge related work into single bullets. The goal is a concise high-level summary, not an exhaustive changelog. Merging rules:
 - All work on the same initiative/theme = one bullet (e.g. "Security v13" across 15 repos is ONE bullet, not per-repo)
 - CI/infrastructure changes related to the same effort fold into that effort's bullet
-- Multiple repos touched for the same reason = mention the count, not the list (e.g. "across 12 repon")
+- Multiple repos touched for the same reason = mention the count, not the list (e.g. "across 12 repos")
 - Only split into a separate bullet if the work is genuinely unrelated to other bullets
 - If you have more than 4 candidate bullets, keep merging until you're at 3–4
 
 Examples:
-- 20 commits across 15 repos for security upgrades + docker CI + lint fixes → ONE bullet: "Security v13 — pushade uppgraderingar (Go 1.26, grpc, DHI-images) och lade till docker-build-test CI i 12 repon"
-- A commit "feat: add search-sfn-executions tool" + Linear NEX-796 in review → "Färdigställt PR för NEX-796 (search-sfn-executions verktyget)"
+- 20 commits across 15 repos for security upgrades + docker CI + lint fixes → ONE bullet: "Security v13: pushed the upgrades (Go 1.26, grpc, DHI images) and added docker-build-test CI across 12 repos"
+- A commit "feat: add search-sfn-executions tool" + Linear NEX-796 in review → "Finished the PR for NEX-796 (the search-sfn-executions tool)"
 - Multiple Claude sessions about the same topic → one bullet summarizing the activity
 
-Check the current day of week. If it's Friday, use *Måndag* instead of *Imorgon* for the next-day section.
+Check the current day of week. If it's Friday, use *Monday* instead of *Tomorrow* for the next-day section.
+
+Do not show this draft to the user yet. It goes through the cut pass in Step 10 first.
 
 **Slack mrkdwn formatting rules — strictly follow these:**
 - Bold headings: `*text*` (single asterisk), NOT `**text**`
@@ -320,30 +318,55 @@ Check the current day of week. If it's Friday, use *Måndag* instead of *Imorgon
 - No markdown headers (`#`), no code fences, no blank lines between a heading and its first bullet
 - Each section heading is on its own line, followed immediately by bullets on the next line
 
-Present the draft in this format (exactly — no extra blank lines between heading and bullets):
+The draft uses this format (exactly — no extra blank lines between heading and bullets):
 
 ```
-*Idag*
+*Today*
 • {bullet 1}
 • {bullet 2}
 • {bullet 3}
 
-*{Måndag if Friday, otherwise Imorgon}*
-• {inferred bullet 1, or "(fyll i)" if nothing could be inferred}
+*{Monday if Friday, otherwise Tomorrow}*
+• {inferred bullet 1, or "(fill in)" if nothing could be inferred}
 
 *Top of mind*
-• {inferred bullet from Step 7, or "(fyll i)" if nothing found}
+• {inferred bullet from Step 8, or "(fill in)" if nothing found}
 ```
 
-After presenting the draft, ask the user:
-1. Whether any bullets in "Idag" should be rephrased or removed
+### Step 10: Cut Pass
+
+The compiled draft is always longer than it needs to be. Run an explicit cut pass over it before anyone sees it — this step exists to make the summary shorter, not prettier.
+
+Go through every bullet in all three sections and cut:
+- **Filler openers** — "Worked on", "Spent time on", "Looked into", "Continued with". Lead with the actual thing that happened.
+- **Detail a teammate can't act on** — commit counts, file names, branch names, internal function names. Keep ticket IDs, service names, PR links.
+- **Restated context** — if two bullets share a subject, they are one bullet.
+- **Hedges and intensifiers** — "basically", "a bit of", "some", "quite", "various".
+- **Anything that doesn't change a teammate's picture of the day.** If cutting a clause loses nothing, cut it.
+
+Budgets to hit, not to approach:
+- "Today": 3–4 bullets, one line each (roughly 25 words max per bullet).
+- "Tomorrow"/"Monday" and "Top of mind": at most 2 bullets each, one line each.
+- Whole post fits on a screen without scrolling.
+
+Then verify, explicitly, before moving on:
+1. Count the bullets per section. Over budget means keep merging, not keep writing.
+2. Re-read each bullet and ask "would I say this out loud in standup?" If not, rewrite it shorter.
+3. Confirm nothing important was lost in the cutting — a shorter post that hides a blocker is worse than a long one.
+
+**REQUIRED — invoke the human-voice skill as the last action of this step.** Do not just apply the contract from memory: actually invoke the `human-voice` skill (via the Skill tool) on the cut draft every single time, even when it already looks fine. Note that the skill's own examples are in Swedish; apply its contract but keep the EOD in English.
+
+The contract that pass enforces, for every bullet across all three sections: complete plain sentences over telegraphic fragments, no em-dashes, and spell out compression shorthands (`+` → "and", `X→Y` → "from X to Y", `/` between values). Shorter does not mean clipped.
+
+Only after the cut pass and the human-voice pass do you present the draft to the user, in the Step 9 format. Then ask:
+1. Whether any bullets in "Today" should be rephrased or removed
 2. Whether there are additional things they worked on that weren't captured (meetings, investigations, discussions, Slack threads, etc.)
-3. Whether the inferred "Imorgon/Måndag" bullets look right, and what else to add or change
+3. Whether the inferred "Tomorrow/Monday" bullets look right, and what else to add or change
 4. Whether the "Top of mind" bullets are accurate, and if there's anything else on their mind
 
-Then produce the final version incorporating their input.
+Then produce the final version incorporating their input. If their input adds bullets, re-run the cut pass on the result — the budgets apply to the final version too.
 
-### Step 10: Post to #nexus-eods
+### Step 11: Post to #nexus-eods
 
 After the user confirms the final version, post it as a reply in the day's EOD thread in **#nexus-eods** (private channel, ID `C09AMEF6AG7`). The team posts EODs as replies under the daily Slackbot "Dagens EOD" reminder, so that reminder message is the thread parent — do NOT post a new top-level message and do NOT just copy to clipboard.
 
@@ -357,7 +380,7 @@ After the user confirms the final version, post it as a reply in the day's EOD t
    ```
    slack_send_message(channel_id="C09AMEF6AG7", thread_ts="<reminder ts>", message="<final EOD>")
    ```
-   `slack_send_message` accepts **standard markdown** and converts it to Slack formatting — so for the posted message use `**bold**` section headings and `[text](url)` links (NOT the `*bold*` / `<url|text>` mrkdwn from Step 9's preview). Keep `•` bullets. Do not set `reply_broadcast`.
+   `slack_send_message` accepts **standard markdown** and converts it to Slack formatting — so for the posted message use `**bold**` section headings and `[text](url)` links (NOT the `*bold*` / `<url|text>` mrkdwn from the Step 9 format block). Keep `•` bullets. Do not set `reply_broadcast`.
 4. **Return the `message_link`** to the user, and ask them to eyeball that the bold headings rendered. If literal `**` shows up, the tool passed the markdown through unchanged — repost with single-asterisk `*bold*`.
 5. **No matching reminder for the target date** (e.g. weekend, or the reminder hasn't fired yet): do NOT guess a thread. Tell the user there's no EOD thread for that day and offer to either (a) post as a standalone top-level message in the channel, or (b) fall back to clipboard.
 6. **Slack not available / not authenticated:** fall back to clipboard and say so —
@@ -374,5 +397,6 @@ After the user confirms the final version, post it as a reply in the day's EOD t
 - Git author is auto-detected per repo via `git config user.email`.
 - Session JSONL uses `type: "user"` with content as string or list of blocks.
 - If any source fails, skip gracefully and note the gap.
-- Write "Idag" bullets in Swedish, casual/natural tone — like writing to teammates, not a formal report. Keep technical terms in English (e.g. "deploy", "merge", "PR", "CI", "pipeline", "endpoint", "refactor", service names, tool names, etc.) — only the surrounding narrative should be in Swedish.
+- Write the whole post in English, casual/natural tone — like writing to teammates, not a formal report. The team includes colleagues who don't read Swedish, so no Swedish headings or bullets. Swedish proper nouns stay as they are (channel names, ticket titles, service names).
+- The cut pass in Step 10 is not optional. If the draft comes out at 6 bullets, the answer is fewer bullets, not smaller font.
 - Slack activity is gathered via the Slack MCP tools (`mcp__plugin_slack_slack__slack_search_public_and_private` and `mcp__plugin_slack_slack__slack_read_thread`). User's Slack ID: `U0314GC3YRY`. If Slack is not authenticated, skip and note the gap.

@@ -15,12 +15,18 @@ Headless agentic task runner (Claude or Codex) in a persistent Docker sandbox. E
 
 Always pass `--env-file .ralphish.env` — it carries `GH_TOKEN`, `LINEAR_API_KEY`, etc.; without it the worker cannot push branches or open PRs. The path is resolved relative to the current directory, so either `cd ~/Dev/Projects` first or use absolute paths for both the env file and the workspace.
 
+**Always pass `--include-local-config` too**, so the sandboxed worker gets the same skills, plugins, and agent config as the local session — without it the worker has none of the team's conventions or tooling. This syncs the `model` pinned in `~/.claude/settings.json` into the sandbox, so **always also pass `--worker-model claude-opus-5`** as insurance for iteration 1 (when `context.yaml` has no `worker_tier` yet) in case the sandbox token can't use whatever alias is pinned locally.
+
+**Before starting an unrelated task**, blank `.ralphish/context.yaml` in the workspace (`rm -f .ralphish/context.yaml` or `> .ralphish/context.yaml`). Nothing in the harness wipes it between runs, and a stale `prior_attempt_branch` from a previous task makes the worker try to check out that task's branch instead of starting fresh.
+
 ```bash
 cd ~/Dev/Projects
-ralphish --env-file .ralphish.env .                     # one iteration (default)
-ralphish --env-file .ralphish.env --max-iterations 5 .  # up to 5 iterations
-ralphish --env-file .ralphish.env --new .               # recreate sandbox first
-ralphish --rm .                                         # remove sandbox
+[ -n "$(cat .ralphish/context.yaml 2>/dev/null)" ] && echo "context.yaml is non-empty — blank it first if this is a new/unrelated task"
+
+ralphish --env-file .ralphish.env --include-local-config --worker-model claude-opus-5 .                     # one iteration (default)
+ralphish --env-file .ralphish.env --include-local-config --worker-model claude-opus-5 --max-iterations 5 .  # up to 5 iterations
+ralphish --env-file .ralphish.env --include-local-config --worker-model claude-opus-5 --new .               # recreate sandbox first
+ralphish --rm .                                                                                              # remove sandbox
 ```
 
 Runs are long (minutes per iteration) — from Claude Code, launch with `run_in_background` and check output periodically.
@@ -28,9 +34,9 @@ Runs are long (minutes per iteration) — from Claude Code, launch with `run_in_
 Headless caveats (running from Claude Code / CI rather than a terminal):
 
 - Requires the `[ -t 0 ]` TTY guard in `~/Dev/Infra/docker-sandbox/sandbox` (prompt mode); without it every phase dies with `the input device is not a TTY`. Fixed locally 2026-07-14; check it's still there after pulling that repo — upstream may not have it.
-- With `--include-local-config`, a `model` pinned in `~/.claude/settings.json` (e.g. `fable`) is synced into the sandbox, and the worker fails with "issue with the selected model" when the sandbox token can't use that alias. Pass `--worker-model claude-opus-5` as the fallback — reviewer/orchestrator already get explicit models.
+- `--include-local-config` syncs the `model` pinned in `~/.claude/settings.json` into the sandbox, and the worker fails with "issue with the selected model" when the sandbox token can't use that alias — this is exactly what the default `--worker-model claude-opus-5` above guards against. Reviewer/orchestrator already get explicit models, so they're unaffected.
 
-Other flags: `--codex`/`--agent codex` (Codex instead of Claude), `--include-local-config` (copy local plugins/skills into sandbox), `--env KEY=VALUE`, `--reviewer-model` / `--orchestrator-model` (default sonnet-tier), `--worker-model` (fallback only — normally the orchestrator sets `worker_tier: simple|medium|complex|frontier` in `context.yaml` and ralphish resolves the model from that).
+Other flags: `--codex`/`--agent codex` (Codex instead of Claude), `--env KEY=VALUE`, `--reviewer-model` / `--orchestrator-model` (default sonnet-tier), `--worker-model` (fallback only — normally the orchestrator sets `worker_tier: simple|medium|complex|frontier` in `context.yaml` and ralphish resolves the model from that).
 
 ## Managing tasks (progress.yaml)
 
@@ -65,6 +71,8 @@ Task authoring pipeline for bigger work: `/grill-me` → `/write-a-prd` → `/pr
 ## Common mistakes
 
 - Forgetting `--env-file .ralphish.env` → worker fails at push/PR time, task gets rejected for the wrong reason
+- Forgetting `--include-local-config` → worker runs without local skills/plugins/conventions
+- Starting a new task with a stale `.ralphish/context.yaml` left over from a previous one → worker tries to resume the wrong branch; blank the file first
 - Editing `progress.yaml` while a loop is running — the orchestrator rewrites it each iteration
 - Reaching for `--new` routinely — it wipes the sandbox; use only when the sandbox is broken or stale
 - Adding a task without bumping `next_id`

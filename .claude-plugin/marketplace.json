@@ -1,0 +1,13 @@
+{
+  "name": "sebastian-skills",
+  "owner": {
+    "name": "Sebastian Gerstelsöllerman"
+  },
+  "plugins": [
+    {
+      "name": "sebastian-skills",
+      "source": ".",
+      "description": "Sebastian's personal skills: clean-architecture, create-a-plan, eod-summary, find-skills, git-crypt-add-gpg-collaborator, grill-me, human-voice, prd-to-local-implementation-plan, ralphish, ubiquitous-language, write-a-prd"
+    }
+  ]
+}

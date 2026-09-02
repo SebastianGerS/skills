@@ -1,0 +1,19 @@
+{
+  "name": "sebastian-skills",
+  "displayName": "Sebastian's Skills",
+  "description": "Personal skills: clean-architecture, create-a-plan, eod-summary, find-skills, git-crypt-add-gpg-collaborator, grill-me, human-voice, prd-to-local-implementation-plan, ralphish, ubiquitous-language, write-a-prd",
+  "version": "0.1.0",
+  "author": {
+    "name": "Sebastian Gerstelsöllerman"
+  },
+  "homepage": "https://github.com/SebastianGerS/skills",
+  "repository": "https://github.com/SebastianGerS/skills",
+  "license": "MIT",
+  "keywords": [
+    "personal",
+    "skills",
+    "tv4",
+    "ralphish"
+  ],
+  "skills": "./"
+}

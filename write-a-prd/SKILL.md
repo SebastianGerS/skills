@@ -50,7 +50,7 @@ This skill will be invoked when the user wants to create a PRD and track it in L
    - PRs require ≥1 approval + all CI checks passing (tests, linters, type checks, security scans)
 
    **Standard libraries (prefer over custom implementations):**
-   - Go: go-kit (`github.com/go-kit/kit`, `github.com/go-kit/log`) for middleware, transport, logging, metrics, tracing, rate limiting, circuit-breaking
+   - Go: TV4's go-kit (`github.com/TV4/go-kit/*` — `server`, `auth/handshake`, `otel`, `metrics`, `tracing`, `log`, `tvmctx`, `circuitbreaker`) for middleware, auth, logging, metrics, tracing, circuit-breaking. Not the unrelated open-source `github.com/go-kit/kit`.
    - Node.js: node-kit (`@tv4/node-kit-*`) for the same concerns
 
 4. Interview the user relentlessly about every aspect of this plan until you reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. Make sure to cover:

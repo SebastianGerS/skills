@@ -8,12 +8,16 @@ description: Use when the user wants to run ralphish, kick off headless/automate
 Headless agentic task runner (Claude or Codex) in a persistent Docker sandbox. Each iteration runs three phases — Worker (implements one task), Reviewer (reviews the diff), Orchestrator (updates state, picks next work) — over tasks in `progress.yaml`.
 
 - Binary: `~/.local/bin/ralphish` — `ralphish --help` is authoritative (README may lag the binary)
+- **Invoke through `~/.local/bin/ralphish-secure`, not `ralphish` directly** — same flags, but it supplies the secrets from the macOS keychain
 - Source + full docs: `~/Dev/Scripts/ralphish` (README.md)
-- Standard workspace: `~/Dev/Projects` (backlog `progress.yaml`, secrets `.ralphish.env`)
+- Standard workspace: `~/Dev/Projects` (backlog `progress.yaml`)
+- Secrets: macOS keychain, service `ralphish`, one item per variable. There is no `.ralphish.env` any more — it was deleted once the keychain held its contents
 
 ## Invoking
 
-Always pass `--env-file .ralphish.env` — it carries `GH_TOKEN`, `LINEAR_API_KEY`, etc.; without it the worker cannot push branches or open PRs. The path is resolved relative to the current directory, so either `cd ~/Dev/Projects` first or use absolute paths for both the env file and the workspace.
+**Run `ralphish-secure`, never bare `ralphish`.** It reads `NODE_AUTH_TOKEN`, `AIKIDO_API_KEY` and `LINEAR_API_KEY` from the keychain and `GH_TOKEN` from `gh auth token`, writes them to a 0600 temp env file, passes it as `--env-file`, and deletes it when the run ends (Ctrl-C included). Every other flag passes straight through. Without those secrets the worker cannot push branches or open PRs.
+
+`ralphish-secure --check` lists which keys resolve, without printing values — run it first if a worker fails at push or PR time. `SLACK_WEBHOOK_URL` showing `not set (optional)` is expected; it only feeds the PAUSE notification, which fails open.
 
 **Always pass `--include-local-config` too**, so the sandboxed worker gets the same skills, plugins, and agent config as the local session — without it the worker has none of the team's conventions or tooling. This syncs the `model` pinned in `~/.claude/settings.json` into the sandbox, so **always also pass `--worker-model claude-opus-5`** as insurance for iteration 1 (when `context.yaml` has no `worker_tier` yet) in case the sandbox token can't use whatever alias is pinned locally.
 
@@ -23,9 +27,9 @@ Always pass `--env-file .ralphish.env` — it carries `GH_TOKEN`, `LINEAR_API_KE
 cd ~/Dev/Projects
 [ -n "$(cat .ralphish/context.yaml 2>/dev/null)" ] && echo "context.yaml is non-empty — blank it first if this is a new/unrelated task"
 
-ralphish --env-file .ralphish.env --include-local-config --worker-model claude-opus-5 .                     # one iteration (default)
-ralphish --env-file .ralphish.env --include-local-config --worker-model claude-opus-5 --max-iterations 5 .  # up to 5 iterations
-ralphish --env-file .ralphish.env --include-local-config --worker-model claude-opus-5 --new .               # recreate sandbox first
+ralphish-secure --include-local-config --worker-model claude-opus-5 .                     # one iteration (default)
+ralphish-secure --include-local-config --worker-model claude-opus-5 --max-iterations 5 .  # up to 5 iterations
+ralphish-secure --include-local-config --worker-model claude-opus-5 --new .               # recreate sandbox first
 ralphish --rm .                                                                                              # remove sandbox
 ```
 
@@ -70,7 +74,7 @@ Task authoring pipeline for bigger work: `/grill-me` → `/write-a-prd` → `/pr
 
 ## Common mistakes
 
-- Forgetting `--env-file .ralphish.env` → worker fails at push/PR time, task gets rejected for the wrong reason
+- Running bare `ralphish` instead of `ralphish-secure` → no secrets, worker fails at push/PR time and the task gets rejected for the wrong reason
 - Forgetting `--include-local-config` → worker runs without local skills/plugins/conventions
 - Starting a new task with a stale `.ralphish/context.yaml` left over from a previous one → worker tries to resume the wrong branch; blank the file first
 - Editing `progress.yaml` while a loop is running — the orchestrator rewrites it each iteration

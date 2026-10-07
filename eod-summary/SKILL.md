@@ -1,6 +1,10 @@
 ---
 name: eod-summary
-description: Use when the user asks for an end-of-day summary, daily standup prep, status update, or wants to know what they worked on today. Also use when user says "eod", "standup", "what did I do today", or "daily summary".
+description: >
+  Builds the day's EOD post from git, GitHub, Linear, Slack and Claude/Codex session
+  history, cuts it down to a few bullets, and posts it in the day's #nexus-eods thread.
+  Use for "eod", "standup update", "what did I do today" or an end-of-day status for
+  the team.
 ---
 
 # EOD Summary
@@ -311,7 +315,7 @@ Check the current day of week. If it's Friday, use *Monday* instead of *Tomorrow
 Do not show this draft to the user yet. It goes through the cut pass in Step 10 first.
 
 **Slack mrkdwn formatting rules — strictly follow these:**
-- Bold headings: `*text*` (single asterisk), NOT `**text**`
+- Bold headings: `*text*` (single asterisk); `**text**` renders as literal asterisks in mrkdwn
 - Every item under a heading must be a bullet: use `•` character (not `-` or `*`)
 - Indent sub-bullets with two spaces + `◦`
 - Links: `<url|text>`
@@ -368,7 +372,7 @@ Then produce the final version incorporating their input. If their input adds bu
 
 ### Step 11: Post to #nexus-eods
 
-After the user confirms the final version, post it as a reply in the day's EOD thread in **#nexus-eods** (private channel, ID `C09AMEF6AG7`). The team posts EODs as replies under the daily Slackbot "Dagens EOD" reminder, so that reminder message is the thread parent — do NOT post a new top-level message and do NOT just copy to clipboard.
+After the user confirms the final version, post it as a reply in the day's EOD thread in **#nexus-eods** (private channel, ID `C09AMEF6AG7`). The team posts EODs as replies under the daily Slackbot "Dagens EOD" reminder, so that reminder message is the thread parent. A new top-level message or a clipboard copy lands outside the thread the team reads, so neither is a substitute.
 
 1. **Determine the target date** — today by default, or the specific earlier day if the skill was explicitly run for a previous day (e.g. "eod for friday").
 2. **Find that day's reminder thread.** Read the channel newest-first and locate the Slackbot `Dagens EOD` reminder whose timestamp **date matches the target date**:
@@ -380,9 +384,9 @@ After the user confirms the final version, post it as a reply in the day's EOD t
    ```
    slack_send_message(channel_id="C09AMEF6AG7", thread_ts="<reminder ts>", message="<final EOD>")
    ```
-   `slack_send_message` accepts **standard markdown** and converts it to Slack formatting — so for the posted message use `**bold**` section headings and `[text](url)` links (NOT the `*bold*` / `<url|text>` mrkdwn from the Step 9 format block). Keep `•` bullets. Do not set `reply_broadcast`.
+   `slack_send_message` accepts **standard markdown** and converts it to Slack formatting — so for the posted message use `**bold**` section headings and `[text](url)` links (not the `*bold*` / `<url|text>` mrkdwn from the Step 9 format block, which the tool would double-convert). Keep `•` bullets. Do not set `reply_broadcast`.
 4. **Return the `message_link`** to the user, and ask them to eyeball that the bold headings rendered. If literal `**` shows up, the tool passed the markdown through unchanged — repost with single-asterisk `*bold*`.
-5. **No matching reminder for the target date** (e.g. weekend, or the reminder hasn't fired yet): do NOT guess a thread. Tell the user there's no EOD thread for that day and offer to either (a) post as a standalone top-level message in the channel, or (b) fall back to clipboard.
+5. **No matching reminder for the target date** (e.g. weekend, or the reminder hasn't fired yet): do not guess a thread, because a reply under the wrong day's reminder is easy to miss. Tell the user there's no EOD thread for that day and offer to either (a) post as a standalone top-level message in the channel, or (b) fall back to clipboard.
 6. **Slack not available / not authenticated:** fall back to clipboard and say so —
    ```bash
    pbcopy << 'EOF'

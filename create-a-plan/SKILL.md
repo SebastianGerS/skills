@@ -1,6 +1,11 @@
 ---
 name: create-a-plan
-description: Create a plan through user interview, codebase exploration, and module design, then save it locally in the plans folder and add a task to progress.yaml. Use when user wants to create a plan, design a feature, or plan new work.
+description: >
+  Designs a feature or change with the user through an interview and a codebase walk,
+  then writes the plan to the project's plans folder and queues it as a task in
+  progress.yaml. Use for "create a plan", "plan this feature" or "let's design this
+  before coding" when the plan should stay local rather than go to Linear
+  (write-a-prd).
 ---
 
 This skill will be invoked when the user wants to create a plan for a feature or change. You may skip steps if you don't consider them necessary.
@@ -31,7 +36,7 @@ The solution to the problem, from the user's perspective.
 
 ## User Stories
 
-A LONG, numbered list of user stories. Each user story should be in the format of:
+A long, numbered list of user stories. Each user story should be in the format of:
 
 1. As an <actor>, I want a <feature>, so that <benefit>
 
@@ -53,7 +58,7 @@ A list of implementation decisions that were made. This can include:
 - API contracts
 - Specific interactions
 
-Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.
+Leave out specific file paths and code snippets, because they go stale long before the plan does.
 
 ## Testing Decisions
 

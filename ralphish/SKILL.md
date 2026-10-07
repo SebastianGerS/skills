@@ -1,6 +1,10 @@
 ---
 name: ralphish
-description: Use when the user wants to run ralphish, kick off headless/automated coding on the task backlog, add/cancel/inspect tasks in progress.yaml, or check what ralphish is working on. Triggers: "run ralphish", "start the loop", "add a task to the backlog", "what is ralphish doing", "resume ralphish".
+description: >
+  Runs and manages ralphish, the headless Worker/Reviewer/Orchestrator loop that works
+  the progress.yaml backlog in a Docker sandbox: starting it with the right flags,
+  adding or cancelling tasks, and reading its state files. Use for "run ralphish",
+  "resume ralphish", "what is ralphish doing" or "add a task to progress.yaml".
 ---
 
 # Ralphish

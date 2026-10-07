@@ -1,6 +1,10 @@
 ---
 name: human-voice
-description: Use when drafting or composing any external-facing message or document for a person to read — a Slack message, an email, a Linear issue/ticket/comment, or a Notion page/doc — before writing the draft. Triggers whenever output is meant to be read by colleagues rather than run as code or shown as internal reasoning.
+description: >
+  Writes a Slack message, email, Linear issue or comment, or Notion page in the user's
+  own voice: sampled from their recent messages, short, in plain complete sentences
+  with no assistant tells. Use before drafting anything a colleague will read, such as
+  "draft a Slack message", "write a comment on NEX-123" or "reply to this email".
 ---
 
 # human-voice

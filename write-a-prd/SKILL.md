@@ -1,6 +1,11 @@
 ---
 name: write-a-prd
-description: Create a PRD through user interview, codebase exploration, and module design, then submit as a new or updated Linear issue. Use when user wants to write a PRD, create a product requirements document, or plan a new feature using Linear.
+description: >
+  Writes a PRD with the user through an interview, a codebase walk and a TVM
+  conventions check (language, naming, API shape, storage, observability, infra),
+  then files it as a new or updated Linear issue. Use for "write a PRD", "requirements
+  doc for this feature in Linear" or planning a feature that should be tracked in
+  Linear rather than locally (create-a-plan).
 ---
 
 This skill will be invoked when the user wants to create a PRD and track it in Linear. You may skip steps if you don't consider them necessary.
@@ -92,7 +97,7 @@ The solution to the problem, from the user's perspective.
 
 ## User Stories
 
-A LONG, numbered list of user stories. Each user story should be in the format of:
+A long, numbered list of user stories. Each user story should be in the format of:
 
 1. As an <actor>, I want a <feature>, so that <benefit>
 
@@ -133,7 +138,7 @@ A list of implementation decisions that were made. This can include:
 - API contracts
 - Specific interactions
 
-Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.
+Leave out specific file paths and code snippets, because they go stale long before the plan does.
 
 ## Testing Decisions
 

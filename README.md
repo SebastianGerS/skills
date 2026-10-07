@@ -1,59 +1,42 @@
 # Agent Skills
 
-A collection of agent skills that extend capabilities across planning, development, and knowledge.
+Sebastian's personal [Claude Code](https://claude.com/claude-code) skills: planning,
+day-to-day workflow and a few TV4-shaped utilities. Team-wide TV4/Nexus skills live in
+[`TV4/nexus-skills`](https://github.com/TV4/nexus-skills).
 
-## Planning & Design
+## Install
 
-- **write-a-prd** — Create a PRD through user interview, codebase exploration, and module design, then submit as a new or updated Linear issue.
+As a Claude Code plugin from this directory (the marketplace manifest is in `.claude-plugin/`):
 
-  ```
-  npx skills@latest add SebastianGerS/skills/write-a-prd
-  ```
+```bash
+claude plugin marketplace add ~/Dev/Scripts/skills
+claude plugin install sebastian-skills@sebastian-skills
+```
 
-- **prd-to-local-implementation-plan** — Mirror a Linear issue's PRD into the local plans folder and queue it in progress.yaml for sandboxed local implementation.
+Or one skill at a time, on any runtime that reads `~/.agents/skills/`:
 
-  ```
-  npx skills@latest add SebastianGerS/skills/prd-to-local-implementation-plan
-  ```
+```bash
+npx skills@latest add SebastianGerS/skills/<skill>
+```
 
-- **grill-me** — Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree.
+## Skills
 
-  ```
-  npx skills@latest add SebastianGerS/skills/grill-me
-  ```
+| Skill | What it's for |
+|-------|---------------|
+| `write-a-prd` | Write a PRD through an interview, a codebase walk and a TVM conventions check, then file it as a Linear issue |
+| `create-a-plan` | Same interview and module design, but the plan stays local in `plans/` and is queued in `progress.yaml` |
+| `prd-to-local-implementation-plan` | Mirror a Linear issue's PRD into `plans/` and queue it in `progress.yaml` for a sandboxed ralphish run |
+| `grill-me` | Interview the user one question at a time until every branch of a plan or design is resolved |
+| `ralphish` | Run and manage the headless Worker/Reviewer/Orchestrator loop over the `progress.yaml` backlog |
+| `clean-architecture` | Layer boundaries and the dependency rule for new Flutter and Go modules (auditing an existing Go repo is `go-clean-arch-qa` in nexus-skills) |
+| `ubiquitous-language` | Extract a DDD-style glossary from the conversation into `UBIQUITOUS_LANGUAGE.md` |
+| `human-voice` | Draft Slack, email, Linear and Notion text in the user's own voice: short, plain, no assistant tells |
+| `eod-summary` | Build the day's EOD from git, GitHub, Linear, Slack and session history, cut it down, post it in `#nexus-eods` |
+| `git-crypt-add-gpg-collaborator` | Add a GitHub user's GPG key to the repo's git-crypt keyring on a branch, with the identity surfaced for confirmation |
+| `find-skills` | Search the open skills ecosystem (skills.sh, `npx skills`) for an installable skill and vet it before recommending |
 
-- **linear-ticket** — Fetch full context from a Linear ticket before acting on it. Triggers whenever a Linear issue is referenced by ID, URL, or phrases like "this ticket".
+## Writing and editing skills
 
-  ```
-  npx skills@latest add SebastianGerS/skills/linear-ticket
-  ```
+Skills follow the [superpowers `writing-skills`](https://github.com/obra/superpowers) discipline: establish baseline behavior, write the skill, verify it changes behavior.
 
-## Development
-
-- **go-upgrade** — Safely upgrade Go dependencies and Docker base images with special handling for OpenTelemetry ecosystem coherence, semconv alignment, and bridge package compatibility.
-
-  ```
-  npx skills@latest add SebastianGerS/skills/go-upgrade
-  ```
-
-## Knowledge
-
-- **ubiquitous-language** — Extract a DDD-style ubiquitous language glossary from the current conversation, flagging ambiguities and proposing canonical terms.
-
-  ```
-  npx skills@latest add SebastianGerS/skills/ubiquitous-language
-  ```
-
-- **find-skills** — Helps users discover and install agent skills.
-
-  ```
-  npx skills@latest add SebastianGerS/skills/find-skills
-  ```
-
-## Productivity
-
-- **eod-summary** — Generate a structured end-of-day summary from git, GitHub, Linear, Slack, and session history. Outputs Slack-formatted Swedish standup updates.
-
-  ```
-  npx skills@latest add SebastianGerS/skills/eod-summary
-  ```
+`description` fields say *what the skill does* first, then *when to use it*: the key use case leads, followed by a few natural phrasings a user would actually type. Claude Code truncates the listing at 1,536 characters, and Claude 5-generation models trigger readily on descriptions, so a long trigger-phrase list or capitalised emphasis (MUST, ALWAYS, CRITICAL) makes a skill over-trigger rather than helps it fire. The same goes for the body: explain the reason behind a rule instead of shouting it. Keep `SKILL.md` under ~500 lines and move reference material into sibling files, because a loaded skill stays in context for the rest of the session. Measure with `/skill-doctor` and `claude plugin eval` before adding trigger phrases: `evals/` holds two should-fire and two near-miss prompts per skill, and `claude plugin eval . --ablation none --tag <skill>` scores them (see `evals/README.md`).

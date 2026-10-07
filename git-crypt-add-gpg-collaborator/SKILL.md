@@ -1,6 +1,11 @@
 ---
 name: git-crypt-add-gpg-collaborator
-description: Add a collaborator's GPG key from GitHub to the current repo's git-crypt config so they can decrypt environment configuration files. Use when someone requests access via their GitHub username (e.g. "add vicandersson's gpg key", "give <user> git-crypt access", "fix the GPG request from Slack"). Takes a GitHub username as input.
+description: >
+  Adds a collaborator's GPG key from GitHub to the current repo's git-crypt keyring on
+  a new branch so they can decrypt the encrypted config files, and reports the key
+  identity for the user to confirm. Use when someone asks for git-crypt access by
+  GitHub username: "add <user>'s gpg key", "give <user> git-crypt access", "fix the
+  GPG request from Slack".
 ---
 
 # Add GPG collaborator to git-crypt

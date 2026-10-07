@@ -3,8 +3,9 @@ name: clean-architecture
 description: >
   Guidelines for Clean Architecture in Flutter and Go applications: layer boundaries,
   the dependency rule and testability. Use when structuring a new Flutter or Go module,
-  deciding which layer code belongs in, or asked about separation of concerns. For
-  auditing an existing Go repo, go-clean-arch-qa is the better fit.
+  deciding which layer a piece of code belongs in, or asked about separation of
+  concerns. Not for auditing an existing Go repo against its import graph; that is
+  go-clean-arch-qa.
 ---
 
 # Clean Architecture

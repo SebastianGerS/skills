@@ -354,7 +354,7 @@ Then verify, explicitly, before moving on:
 2. Re-read each bullet and ask "would I say this out loud in standup?" If not, rewrite it shorter.
 3. Confirm nothing important was lost in the cutting — a shorter post that hides a blocker is worse than a long one.
 
-**REQUIRED — invoke the human-voice skill as the last action of this step.** Do not just apply the contract from memory: actually invoke the `human-voice` skill (via the Skill tool) on the cut draft every single time, even when it already looks fine. Note that the skill's own examples are in Swedish; apply its contract but keep the EOD in English.
+Finish this step by invoking the `human-voice` skill (via the Skill tool) on the cut draft, rather than applying its contract from memory: a draft that already looks fine still tends to drift into telegraphic fragments, and the pass is cheap. The skill's own examples are in Swedish; apply its contract but keep the EOD in English.
 
 The contract that pass enforces, for every bullet across all three sections: complete plain sentences over telegraphic fragments, no em-dashes, and spell out compression shorthands (`+` → "and", `X→Y` → "from X to Y", `/` between values). Shorter does not mean clipped.
 

@@ -10,7 +10,7 @@ A collection of agent skills that extend capabilities across planning, developme
   npx skills@latest add SebastianGerS/skills/write-a-prd
   ```
 
-- **prd-to-local-implementation-plan** — Mirror information from Linear for local tasks in order to enable sandboxed local agentic development.
+- **prd-to-local-implementation-plan** — Mirror a Linear issue's PRD into the local plans folder and queue it in progress.yaml for sandboxed local implementation.
 
   ```
   npx skills@latest add SebastianGerS/skills/prd-to-local-implementation-plan

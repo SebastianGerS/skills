@@ -32,6 +32,7 @@ npx skills@latest add SebastianGerS/skills/<skill>
 | `ubiquitous-language` | Extract a DDD-style glossary from the conversation into `UBIQUITOUS_LANGUAGE.md` |
 | `human-voice` | Draft Slack, email, Linear and Notion text in the user's own voice: short, plain, no assistant tells |
 | `eod-summary` | Build the day's EOD from git, GitHub, Linear, Slack and session history, cut it down, post it in `#nexus-eods` |
+| `local-secrets` | Map of the API keys and tokens in the macOS keychain (names and purposes only) and how to use one inline without printing it |
 | `git-crypt-add-gpg-collaborator` | Add a GitHub user's GPG key to the repo's git-crypt keyring on a branch, with the identity surfaced for confirmation |
 | `find-skills` | Search the open skills ecosystem (skills.sh, `npx skills`) for an installable skill and vet it before recommending |
 

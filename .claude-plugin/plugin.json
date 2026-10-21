@@ -1,8 +1,8 @@
 {
   "name": "sebastian-skills",
   "displayName": "Sebastian's Skills",
-  "description": "Personal skills: clean-architecture, create-a-plan, eod-summary, find-skills, git-crypt-add-gpg-collaborator, grill-me, human-voice, prd-to-local-implementation-plan, ralphish, ubiquitous-language, write-a-prd",
-  "version": "0.3.0",
+  "description": "Personal skills: clean-architecture, create-a-plan, eod-summary, find-skills, git-crypt-add-gpg-collaborator, grill-me, human-voice, local-secrets, prd-to-local-implementation-plan, ralphish, ubiquitous-language, write-a-prd",
+  "version": "0.4.0",
   "author": {
     "name": "Sebastian Gerstelsöllerman"
   },

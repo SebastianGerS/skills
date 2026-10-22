@@ -33,6 +33,11 @@ H="$(security find-generic-password -a "$USER" -s hive_api_key -w)"; \
   e.g. `docker run -e GH_TOKEN ...`, not `-e GH_TOKEN=$(...)` spelled out.
 - Don't build URLs with a credential in them (`https://x-access-token:$T@github.com/`):
   tools such as `mix deps.get` write the rewritten URL into lockfiles.
+- For Elixir repos with private TV4 deps (playback2, a2d-geoip, stream-count, progrex-import), run
+  `mix` in Docker with `~/Dev/Scripts/mix-docker/mix-docker <task>` from the app's own
+  directory (e.g. `apps/playback2`). It forwards the SSH agent, so no GitHub token
+  enters the container and `mix.lock` keeps its `git@github.com` URLs. Never set
+  `PRIVATE_REPO_URL` or pass `GH_TOKEN` for this.
 - To check a secret exists or matches, compare without printing:
   `security find-generic-password -a "$USER" -s <name> >/dev/null && echo exists`.
 - Read with `-a "$USER"` as well as `-s`, matching how the items are stored, so another

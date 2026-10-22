@@ -23,7 +23,7 @@ Linear ticket or the transcript.
 Read it inline, in the same command that needs it:
 
 ```bash
-H="$(security find-generic-password -s hive_api_key -w)"; \
+H="$(security find-generic-password -a "$USER" -s hive_api_key -w)"; \
   curl -sS -H "X-Api-Key: $H" https://...
 ```
 
@@ -34,7 +34,12 @@ H="$(security find-generic-password -s hive_api_key -w)"; \
 - Don't build URLs with a credential in them (`https://x-access-token:$T@github.com/`):
   tools such as `mix deps.get` write the rewritten URL into lockfiles.
 - To check a secret exists or matches, compare without printing:
-  `security find-generic-password -s <name> >/dev/null && echo exists`.
+  `security find-generic-password -a "$USER" -s <name> >/dev/null && echo exists`.
+- Read with `-a "$USER"` as well as `-s`, matching how the items are stored, so another
+  account's item with the same name is never picked up.
+- If a service answers 401 or 403, the stored key is stale. Find the current value (for
+  a2d.tv services, `nexus-skills:a2d-tokens`) and overwrite the item. Don't retry with
+  the old one.
 - Prefer the keychain read over the env var. Claude Code's shell keeps the env it
   started with, so after a rotation `$VAR` in this session is stale while the keychain
   is current.
@@ -76,23 +81,31 @@ row to the map. Only the name and purpose go in the row.
 
 ## Adding or replacing a secret
 
-Sebastian runs this himself, outside Claude or with `!`. It prompts for the value, so the
-value never appears on a command line:
+Sebastian runs this himself in his own terminal. `read -rs` takes the value without
+echoing it, and the value reaches `security` on stdin through the `printf` builtin, so it
+never appears in a process's arguments. The last line reads it back to confirm the full
+value was stored:
 
 ```bash
-security add-generic-password -U -a "$USER" -s <name> -w
+N=<name>; read -rs "V?value: "; echo; \
+printf 'add-generic-password -U -a %s -s %s -w %s\n' "$USER" "$N" "$V" \
+  | security -i >/dev/null 2>&1; \
+[ "$(security find-generic-password -a "$USER" -s "$N" -w)" = "$V" ] \
+  && echo "stored $N" || echo "store FAILED for $N"; unset V
 ```
 
-From an env var that already holds it (zsh), without the value appearing in the command:
+From an env var that already holds it (zsh), replace the `read` with `V="${(P)VAR}"`.
 
-```bash
-security add-generic-password -U -a "$USER" -s <name> -w "${(P)VAR}"
-```
+Don't use `security add-generic-password ... -w` with no value (the interactive prompt):
+on some macOS versions it silently keeps only the first 128 characters, which cuts JWTs
+and other long tokens. Don't pass the value as `-w "$V"` either, which puts it in the
+process list. A value containing spaces or quotes can't go through `security -i`; store
+that one through Keychain Access instead.
 
 If it backs an env var, export it in `~/.zshrc` with a lookup, not a literal:
 
 ```bash
-export VAR="$(security find-generic-password -s <name> -w 2>/dev/null)"
+export VAR="$(security find-generic-password -a "$USER" -s <name> -w 2>/dev/null)"
 ```
 
 Then add a row to the map above.
